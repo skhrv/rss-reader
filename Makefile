@@ -1,5 +1,5 @@
 develop:
-	npm run webpack-serve
+	npx webpack-serve
 
 install:
 	npm install
@@ -9,7 +9,7 @@ build:
 	NODE_ENV=production npm run webpack
 
 lint:
-	npm run eslint .
+	npx eslint .
 
 deploy:
 	make build
