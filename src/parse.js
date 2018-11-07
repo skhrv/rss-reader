@@ -1,7 +1,7 @@
 export default (xml) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, 'application/xml');
-  if (!doc.querySelector('rss')) {
+  if (!doc.querySelector('channel')) {
     throw new Error('Unable to locate feed');
   }
   const channelTitle = doc.querySelector('channel title').textContent;
