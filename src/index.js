@@ -31,6 +31,10 @@ const app = () => {
   const btnAddFeed = document.querySelector('#btnAddFeed');
   btnAddFeed.addEventListener('click', () => {
     const newFeed = inputFeedURL.value;
+    if (newFeed.length === 0) {
+      state.form.valid = false;
+      return;
+    }
     inputFeedURL.value = '';
     const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const urlWithProxy = `${corsProxy}${newFeed}`;
@@ -42,9 +46,9 @@ const app = () => {
       const { items, channelTitle, channelDesc } = parse(res.data);
       state.feeds.channels.push({ channelTitle, channelDesc });
       state.feeds.items.push(...items);
-    }).catch((e) => {
+    }).catch((error) => {
       state.loading = false;
-      state.error = e.message;
+      state.error = error.message;
     });
   });
 
