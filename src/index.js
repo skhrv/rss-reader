@@ -1,9 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'loaders.css/loaders.min.css';
 import { watch } from 'melanke-watchjs/';
 import axios from 'axios';
-import validator from './validator';
 import parse from './parse';
 import { renderChannelList, renderArticleList } from './renders';
+import {
+  showAlert, removeAlert, validator, showLoader, removeLoader,
+} from './utils';
 
 const state = {
   urlFeeds: [],
@@ -47,10 +50,17 @@ const app = () => {
     const urlFeed = state.urlFeeds.slice(-1);
     const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const urlWithProxy = `${corsProxy}${urlFeed}`;
+    removeAlert();
+    showLoader();
     axios.get(urlWithProxy).then((res) => {
+      removeLoader();
       const { items, channelTitle, channelDesc } = parse(res.data);
       state.feeds.channels.push({ channelTitle, channelDesc });
       state.feeds.items.push(...items);
+      showAlert('success', 'Feed added successfully');
+    }).catch((e) => {
+      removeLoader();
+      showAlert('danger', e.message);
     });
   });
   watch(state, 'feeds', () => {
