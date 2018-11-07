@@ -1,5 +1,4 @@
 import isURL from 'validator/lib/isURL';
-// showAlert, loader
 
 export const showAlert = (type, msg) => {
   const alert = document.createElement('div');
