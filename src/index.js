@@ -8,27 +8,46 @@ import {
   showAlert, removeAlert, validator, showLoader, removeLoader,
 } from './utils';
 
-const state = {
-  urlFeeds: [],
-  form: { valid: null },
-  feeds: {
-    channels: [],
-    items: [],
-  },
-};
 
 const app = () => {
+  const state = {
+    urlFeeds: [],
+    loading: false,
+    error: null,
+    form: { valid: null },
+    feeds: {
+      channels: [],
+      items: [],
+    },
+    request: null,
+  };
+
   const inputFeedURL = document.querySelector('#inputFeedURL');
   inputFeedURL.addEventListener('input', () => {
     const newFeed = inputFeedURL.value;
     state.form.valid = validator(newFeed, state.urlFeeds);
   });
+
   const btnAddFeed = document.querySelector('#btnAddFeed');
   btnAddFeed.addEventListener('click', () => {
     const newFeed = inputFeedURL.value;
-    state.urlFeeds.push(newFeed);
     inputFeedURL.value = '';
+    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+    const urlWithProxy = `${corsProxy}${newFeed}`;
+    state.loading = true;
+    state.error = null;
+    axios.get(urlWithProxy).then((res) => {
+      state.loading = false;
+      state.urlFeeds.push(newFeed);
+      const { items, channelTitle, channelDesc } = parse(res.data);
+      state.feeds.channels.push({ channelTitle, channelDesc });
+      state.feeds.items.push(...items);
+    }).catch((e) => {
+      state.loading = false;
+      state.error = e.message;
+    });
   });
+
   const formAddFeed = document.querySelector('#formAddFeed');
   formAddFeed.addEventListener('submit', (e) => {
     btnAddFeed.click();
@@ -46,23 +65,20 @@ const app = () => {
       btnAddFeed.setAttribute('disabled', '');
     }
   });
-  watch(state, 'urlFeeds', () => {
-    const urlFeed = state.urlFeeds.slice(-1);
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-    const urlWithProxy = `${corsProxy}${urlFeed}`;
-    removeAlert();
-    showLoader();
-    axios.get(urlWithProxy).then((res) => {
+
+  watch(state, 'loading', () => {
+    if (state.loading) {
+      removeAlert();
+      showLoader();
+    } else if (state.error) {
       removeLoader();
-      const { items, channelTitle, channelDesc } = parse(res.data);
-      state.feeds.channels.push({ channelTitle, channelDesc });
-      state.feeds.items.push(...items);
+      showAlert('danger', state.error);
+    } else {
+      removeLoader();
       showAlert('success', 'Feed added successfully');
-    }).catch((e) => {
-      removeLoader();
-      showAlert('danger', e.message);
-    });
+    }
   });
+
   watch(state, 'feeds', () => {
     renderChannelList(state.feeds.channels);
     renderArticleList(state.feeds.items);
