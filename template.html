@@ -18,13 +18,31 @@
       <label class="mr-2" for="feedURLInput">Feed URL</label>
       <input type="text" class="form-control" id="inputFeedURL" placeholder="Enter URL">
     </div>
-    <button type="button" class="btn btn-primary mb-2" id="btnAddFeed">Submit</button>
+    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#myModal" id="btnAddFeed">Submit</button>
   </form>
   </div>
 <div class="list-container">
   <div class="list-group channel-list mb-4">
   </div>
   <div class="list-group article-list">
+  </div>
+</div>
+<div class="modal modal-description fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Description</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
   </div>
 </div>
 </body>

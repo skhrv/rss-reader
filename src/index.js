@@ -2,12 +2,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'loaders.css/loaders.min.css';
 import { watch } from 'melanke-watchjs/';
 import axios from 'axios';
+import $ from 'jquery';
 import parse from './parse';
 import { renderChannelList, renderArticleList } from './renders';
 import {
   showAlert, removeAlert, validator, showLoader, removeLoader,
 } from './utils';
-
+import 'bootstrap';
 
 const app = () => {
   const state = {
@@ -20,6 +21,10 @@ const app = () => {
       items: [],
     },
     request: null,
+    modal: {
+      show: false,
+      content: '',
+    },
   };
 
   const inputFeedURL = document.querySelector('#inputFeedURL');
@@ -88,10 +93,27 @@ const app = () => {
       showAlert('success', 'Feed added successfully');
     }
   });
-
+  const handleBtnDsc = (e) => {
+    const currentTitle = e.target.previousElementSibling.textContent;
+    const { desc } = state.feeds.items.find(({ title }) => title === currentTitle);
+    state.modal.content = desc;
+    state.modal.show = true;
+  };
+  $('.modal-description').on('show.bs.modal', function handle() {
+    $(this).find('.modal-body p').text(state.modal.content);
+  });
+  $('.modal-description').on('hide.bs.modal', () => {
+    state.modal.content = '';
+    state.modal.show = false;
+  });
   watch(state, 'feeds', () => {
     renderChannelList(state.feeds.channels);
-    renderArticleList(state.feeds.items);
+    renderArticleList(state.feeds.items, handleBtnDsc);
+  });
+  watch(state, 'modal', () => {
+    if (state.modal.show) {
+      $('.modal-description').modal();
+    }
   });
 };
 
