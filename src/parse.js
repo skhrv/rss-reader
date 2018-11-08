@@ -9,7 +9,13 @@ export default (xml) => {
   const items = [...doc.querySelectorAll('item')].map((el) => {
     const title = el.querySelector('title').textContent;
     const link = el.querySelector('link').textContent;
-    const desc = el.querySelector('description').textContent;
+    const descElement = el.querySelector('description');
+    let desc;
+    if (descElement) {
+      desc = el.querySelector('description').textContent;
+    } else {
+      desc = null;
+    }
     return { title, link, desc };
   });
   return { channelTitle, channelDesc, items };
