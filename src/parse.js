@@ -11,7 +11,7 @@ export default (xml) => {
     const link = el.querySelector('link').textContent;
     const descElement = el.querySelector('description');
     let desc;
-    if (descElement) {
+    if (descElement === null) {
       desc = el.querySelector('description').textContent;
     } else {
       desc = null;

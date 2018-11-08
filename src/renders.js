@@ -14,7 +14,7 @@ export const renderChannelList = (channels) => {
 export const renderArticleList = (articles, handleBtnDesc) => {
   const container = document.querySelector('.article-list');
   const innerHTML = articles.map(({ title, link, desc }) => {
-    if (desc) {
+    if (desc === null) {
       return (
         `<div class="list-group-item">
             <a href="${link}" class="mr-2">${title}</a>
