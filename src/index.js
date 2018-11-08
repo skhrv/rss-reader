@@ -35,7 +35,6 @@ const app = () => {
       state.form.valid = false;
       return;
     }
-    inputFeedURL.value = '';
     const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const urlWithProxy = `${corsProxy}${newFeed}`;
     state.loading = true;
@@ -74,11 +73,18 @@ const app = () => {
     if (state.loading) {
       removeAlert();
       showLoader();
+      inputFeedURL.setAttribute('disabled', '');
+      btnAddFeed.setAttribute('disabled', '');
     } else if (state.error) {
       removeLoader();
+      inputFeedURL.removeAttribute('disabled', '');
+      btnAddFeed.removeAttribute('disabled', '');
       showAlert('danger', state.error);
     } else {
       removeLoader();
+      inputFeedURL.value = '';
+      inputFeedURL.removeAttribute('disabled', '');
+      btnAddFeed.removeAttribute('disabled', '');
       showAlert('success', 'Feed added successfully');
     }
   });
