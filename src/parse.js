@@ -12,9 +12,9 @@ export default (xml) => {
     const descElement = el.querySelector('description');
     let desc;
     if (descElement === null) {
-      desc = el.querySelector('description').textContent;
-    } else {
       desc = null;
+    } else {
+      desc = el.querySelector('description').textContent;
     }
     return { title, link, desc };
   });

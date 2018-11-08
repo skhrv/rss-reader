@@ -18,14 +18,14 @@ export const renderArticleList = (articles, handleBtnDesc) => {
       return (
         `<div class="list-group-item">
             <a href="${link}" class="mr-2">${title}</a>
-            <button type="button" class="btn btn-light btn-sm btn-description">Description</button>
          </div>`
       );
     }
     return (
       `<div class="list-group-item">
           <a href="${link}" class="mr-2">${title}</a>
-       </div>`
+          <button type="button" class="btn btn-light btn-sm btn-description">Description</button>
+      </div>`
     );
   }).join('');
   container.innerHTML = innerHTML;
