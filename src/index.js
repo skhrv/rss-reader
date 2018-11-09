@@ -3,6 +3,7 @@ import 'loaders.css/loaders.min.css';
 import { watch } from 'melanke-watchjs/';
 import axios from 'axios';
 import $ from 'jquery';
+import _ from 'lodash/fp';
 import parse from './parse';
 import { renderChannelList, renderArticleList } from './renders';
 import {
@@ -20,12 +21,13 @@ const app = () => {
       channels: [],
       items: [],
     },
-    request: null,
     modal: {
       show: false,
       content: '',
     },
   };
+
+  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
 
   const inputFeedURL = document.querySelector('#inputFeedURL');
   inputFeedURL.addEventListener('input', () => {
@@ -40,7 +42,6 @@ const app = () => {
       state.form.valid = false;
       return;
     }
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
     const urlWithProxy = `${corsProxy}${newFeed}`;
     state.loading = true;
     state.error = null;
@@ -61,6 +62,20 @@ const app = () => {
     btnAddFeed.click();
     e.preventDefault();
   });
+
+  const updateFeed = () => {
+    state.urlFeeds.forEach((urlFeed) => {
+      const urlWithProxy = `${corsProxy}${urlFeed}`;
+      state.error = null;
+      axios.get(urlWithProxy).then((res) => {
+        const { items } = parse(res.data);
+        const newItems = items.filter(item => !state.feeds.items.some(_.isEqual(item)));
+        state.feeds.items.push(...newItems);
+      });
+    });
+    setTimeout(updateFeed, 5000);
+  };
+  setTimeout(updateFeed, 5000);
 
   watch(state, 'form', () => {
     if (state.form.valid) {
@@ -107,8 +122,9 @@ const app = () => {
     state.modal.show = false;
   });
   watch(state, 'feeds', () => {
+    const sortedItems = [...state.feeds.items].sort(({ pubDate: a }, { pubDate: b }) => b - a);
     renderChannelList(state.feeds.channels);
-    renderArticleList(state.feeds.items, handleBtnDsc);
+    renderArticleList(sortedItems, handleBtnDsc);
   });
   watch(state, 'modal', () => {
     if (state.modal.show) {
