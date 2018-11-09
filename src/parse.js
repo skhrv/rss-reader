@@ -9,14 +9,13 @@ export default (xml) => {
   const items = [...doc.querySelectorAll('item')].map((el) => {
     const title = el.querySelector('title').textContent;
     const link = el.querySelector('link').textContent;
+    const pubDateElement = el.querySelector('pubDate');
+    const pubDate = pubDateElement === null ? null : Date.parse(pubDateElement.textContent);
     const descElement = el.querySelector('description');
-    let desc;
-    if (descElement === null) {
-      desc = null;
-    } else {
-      desc = el.querySelector('description').textContent;
-    }
-    return { title, link, desc };
+    const desc = descElement === null ? null : descElement.textContent;
+    return {
+      title, link, desc, pubDate,
+    };
   });
   return { channelTitle, channelDesc, items };
 };
