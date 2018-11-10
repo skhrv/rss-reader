@@ -64,16 +64,22 @@ const app = () => {
   });
 
   const updateFeed = () => {
-    state.urlFeeds.forEach((urlFeed) => {
+    const requests = state.urlFeeds.map((urlFeed) => {
       const urlWithProxy = `${corsProxy}${urlFeed}`;
       state.error = null;
-      axios.get(urlWithProxy).then((res) => {
+      return axios.get(urlWithProxy);
+    });
+    axios.all(requests).then((responses) => {
+      const allNewItems = responses.map((res) => {
         const { items } = parse(res.data);
         const newItems = items.filter(item => !state.feeds.items.some(_.isEqual(item)));
-        state.feeds.items.push(...newItems);
-      });
+        return newItems;
+      }).flat();
+      state.feeds.items.push(...allNewItems);
+      setTimeout(updateFeed, 5000);
+    }).catch(() => {
+      setTimeout(updateFeed, 5000);
     });
-    setTimeout(updateFeed, 5000);
   };
   setTimeout(updateFeed, 5000);
 
