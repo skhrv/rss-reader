@@ -1,10 +1,15 @@
 import isURL from 'validator/lib/isURL';
 
 export const showAlert = (type, msg) => {
-  const alert = document.createElement('div');
-  alert.classList.add('alert', `alert-${type}`, 'mb-0');
+  const alert = document.querySelector('.alert');
+  if (!alert) {
+    const newAlert = document.createElement('div');
+    newAlert.classList.add('alert', `alert-${type}`, 'mb-0');
+    newAlert.textContent = msg;
+    document.body.prepend(newAlert);
+    return;
+  }
   alert.textContent = msg;
-  document.body.prepend(alert);
 };
 
 export const removeAlert = () => {

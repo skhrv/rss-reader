@@ -103,11 +103,13 @@ const app = () => {
       btnAddFeed.setAttribute('disabled', '');
     } else if (state.error) {
       removeLoader();
+      removeAlert();
       inputFeedURL.removeAttribute('disabled', '');
       btnAddFeed.removeAttribute('disabled', '');
       showAlert('danger', state.error);
     } else {
       removeLoader();
+      removeAlert();
       inputFeedURL.value = '';
       inputFeedURL.removeAttribute('disabled', '');
       btnAddFeed.removeAttribute('disabled', '');
